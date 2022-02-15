@@ -1,6 +1,6 @@
 NAME = pipex
 
-SRC = main.c
+SRC = main.c pipex_utils.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -10,7 +10,7 @@ LIBFTDIR = ./libft/
 
 CC = gcc
 
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -g
 
 RM = rm -f
 
