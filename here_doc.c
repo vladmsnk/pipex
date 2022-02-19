@@ -1,3 +1,13 @@
-#include <pipex.h>
+#include "pipex_bonus.h"
 
-void	parse_here_doc(char )
+void    here_doc_exec(int argc, char **argv, char **envp)
+{
+    char	*line;
+	
+
+	while (1)
+	{
+		line = get_next_line(1);
+
+	}
+}

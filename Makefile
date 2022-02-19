@@ -1,10 +1,10 @@
 NAME = pipex
 
-SRC = main.c pipex_utils.c
+SRC = bonus.c pipex_utils_bonus1.c pipex_utils_bonus2.c pipex_utils_bonus3.c
 
 OBJ = $(SRC:.c=.o)
 
-HDRS = pipex.h
+HDRS = pipex_bonus.h
 
 LIBFTDIR = ./libft/
 

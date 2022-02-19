@@ -52,4 +52,26 @@ t_init	*allocate_memory(int proc_num)
 		free(cur);
 		return (NULL);
 	}
+	return (cur);
+}
+
+void	close_pipes(int **fds, int pipe_cnt)
+{
+	int	i;
+
+	i = 0;
+	while (i < pipe_cnt)
+	{
+		close(fds[i][0]);
+		close(fds[i][1]);
+		i++;
+	}
+}
+
+void	clean_variables(t_init *tmp, int num_of_pipes, int exit_stat)
+{
+	free(tmp->fds);
+	free(tmp->pids);
+	clean_double(tmp->fds, num_of_pipes);
+	exit(exit_stat);
 }

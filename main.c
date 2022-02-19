@@ -1,40 +1,6 @@
 #include "pipex.h"
 #include <errno.h>
-#include <get_next_line.h>
 
-void	get_error()
-{
-	perror("Error !\n");
-	exit(1);
-}
-
-
-void	execute_command(char *cmd, char **envp)
-{
-	char	**splited_path;
-	char	**splited_cmd;
-	char	*cur_cmd;
-	char	*path;
-	int		i;
-
-	path = extract_paths(envp);
-	splited_path = ft_split(path, ':');
-	splited_cmd = ft_split(cmd, ' ');
-	if (access(splited_cmd[0], X_OK) == 0)
-			execve(splited_cmd[0], splited_cmd, envp);
-	i = 0;
-	while (splited_path[i])
-	{
-		cur_cmd = ft_strjoin(splited_path[i++], "/");
-		cur_cmd = ft_strjoin(cur_cmd, splited_cmd[0]);
-		if (access(cur_cmd, X_OK) == 0)
-		{
-			execve(cur_cmd, splited_cmd, envp);
-		}
-	}
-	perror("command not found");
-	exit(EXIT_FAILURE);
-}
 
 void	exec_first_command(int *fds, int fd1, char *cmd, char **envp)
 {
@@ -54,21 +20,6 @@ void	exec_second_command(int *fds, int fd2, char *cmd, char **envp)
 	dup2(fds[0], STDIN_FILENO);
 	execute_command(cmd, envp);
 	close(fds[0]);
-}
-
-void	check_normal_exit(int wstatus)
-{
-	int	status_code;
-
-	wait(&wstatus);
-	if (WIFEXITED(wstatus))
-	{
-		status_code = WEXITSTATUS(wstatus);
-		if (status_code != 0)
-		{
-			exit(EXIT_SUCCESS);
-		}
-	}
 }
 
 void	pipex(int fd1, int fd2, char **argv, char **envp)
