@@ -34,7 +34,8 @@ int main(int argc, char **argv, char **envp)
 	if (envp && argc >= 5)
 	{
 		if (ft_strncmp(argv[1], "here_doc", ft_strlen(argv[1])) == 0 && argc == 6)
-			here_doc_exec(argv, envp, argc);
+			// here_doc_exec(argv, envp, argc);
+			exit(1);
 		else
 			pipex_bonus(argv, envp, argc);
 	}

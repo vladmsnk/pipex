@@ -2,7 +2,7 @@
 # define PIPEX__BONUS_H
 
 # include "libft/libft.h"
-# include "get_next_line.h"
+# include "get_next_line/get_next_line.h"
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
