@@ -1,5 +1,6 @@
 #include "pipex.h"
 #include <errno.h>
+#include <get_next_line.h>
 
 void	get_error()
 {
@@ -7,43 +8,6 @@ void	get_error()
 	exit(1);
 }
 
-char	*extract_paths(char **envp)
-{
-	char	*paths;
-	int		i;
-
-	i = 0;
-	paths = NULL;
-	while (envp[i])
-	{
-		if (ft_strncmp(envp[i], "PATH", 4) == 0)
-			paths = ft_strdup(envp[i] + 5);
-		i++;
-	}
-	return (paths);
-}
-
-char	*get_cmd(char *cmd, char **envp)
-{
-	char	*right_cmd;
-	char	**splited_path;
-	char	**splited_cmd;
-	int		i;
-
-	splited_cmd = ft_split(cmd, ' ');
-	if (access(splited_cmd[0], X_OK) == 0)
-			return (splited_cmd[0]);
-	splited_path = ft_split(extract_paths(envp), ':');
-	i = 0;
-	while (splited_path[i])
-	{
-		right_cmd = ft_strjoin(splited_path[i++], "/");
-		right_cmd = ft_strjoin(right_cmd, splited_cmd[0]);
-		if (access(right_cmd, X_OK) == 0)
-			return (right_cmd);
-	}
-	return (NULL);
-}
 
 void	execute_command(char *cmd, char **envp)
 {
@@ -159,13 +123,13 @@ void	pipex(int fd1, int fd2, char **argv, char **envp)
 
 void	pipex_bonus(char **argv, char **envp, int argc)
 {
-	int	cmp;
-	int	*pids;
-	int	**fds;
-	int	num_of_cmds;//num of pipes == num of commands - 1 (num of forks)
+	int	cmp;	
+	int	*pids; // to struct
+	int	**fds; // to struct
+	int	num_of_cmds;
 
 	num_of_cmds = argc - 3;
-	pids = (int *)malloc(sizeof(int) * (argc - 3));
+	pids = (int *)malloc(sizeof(int) * (argc - 3)); 
 	if (!pids)
 		exit(EXIT_FAILURE);
 	fds = open_pipes(num_of_cmds - 1);
@@ -191,6 +155,44 @@ void	pipex_bonus(char **argv, char **envp, int argc)
 	wait_all_childs(pids, num_of_cmds);
 }
 
+// void	execute_first_part(char **argv, char **envp, int argc, int *fds1, int *fds2)
+// {
+// 	char *line;
+
+// 	close(fds1[1]);
+// 	while (1)
+// 	{
+// 		line = get_next_line(1);
+// 		if (ft_strncmp(line, argv[2], ft_strlen(argv[2])) == 0)
+// 			break;
+// 		write(fds1[1], line, ft_strlen(line));
+// 	}
+// 	dup2(fds1[0], STDIN_FILENO);
+// 	dup2(fds2[1], STDOUT_FILENO);
+// 	close(fds2[0]);
+// 	execute_command(argv[3], envp);
+// }
+
+// void	pipex_here_doc(char **argv, char **envp, int argc)
+// {
+// 	char *line;
+// 	int	pid1;
+// 	int	pid2;
+// 	int	fds1[2];
+// 	int	fds2[2];
+
+// 	if (pipe(fds1) == -1)
+// 		exit(EXIT_FAILURE);
+// 	if (pipe(fds2) == -1)
+// 		exit(EXIT_FAILURE);
+// 	pid1 = fork();
+// 	if (pid1 == 0)
+// 		execute_first_part(argv, envp, argc, fds1, fds2);
+// 	pid2 = fork();
+// 	if (pid2 == 0)
+// 		execute_second_command(...);
+// }
+
 int main(int argc, char **argv, char **envp)
 {
 	int	fd1;
@@ -199,8 +201,12 @@ int main(int argc, char **argv, char **envp)
 
 	if (envp && argc >= 5)
 	{
-		pipex_bonus(argv, envp, argc);
-	} else
+		if (ft_strncmp(argv[1], "here_doc", ft_strlen(argv[1])) == 0 && argc == 6)
+			pipex_here_doc(argv, envp, argc);
+		else
+			pipex_bonus(argv, envp, argc);
+	}
+	else
 		get_error();
     return (0);
 }

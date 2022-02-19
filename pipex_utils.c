@@ -1,5 +1,36 @@
 #include "pipex.h"
 
+t_init	*allocate_memory(void)
+{
+	t_init *cur;
+
+	cur = (t_init *)malloc(sizeof(t_init));
+	if (!cur)
+		return (NULL);
+	cur->fds = (int *)malloc(sizeof(int) * 2);
+	if (!(cur->fds))
+	{
+		free(cur);
+		return (NULL);
+	}
+	cur->pids = (int *)malloc(sizeof(int) * 2);
+	if (!(cur->pids))
+	{
+		free(cur->fds);
+		free(cur);
+		return (NULL);
+	}
+}
+
+void	clean_variables(t_init *tmp, int exit_stat)
+{
+	free(tmp->fds);
+	free(tmp->pids);
+	free(tmp);
+	exit(exit_stat);
+}
+
+
 void	redirect_infile(char *infile, int *fds_init)
 {
 	int	fd1;
@@ -30,10 +61,7 @@ void	clean_double(int **arr, int len)
 
 	i = 0;
 	while (i < len)
-	{
-		free(arr[i]);
-		i++;
-	}
+		free(arr[i++]);
 	free(arr);
 }
 
@@ -44,10 +72,12 @@ int	**open_pipes(int pipes_num)
 
 	i = 0;
 	fds = (int **)malloc(sizeof(int *) * pipes_num);
+	if (!fds)
+		return (NULL);
 	while (i < pipes_num)
 	{
 		fds[i] = (int *)malloc(sizeof(int) * 2);
-		if (pipe(fds[i]) == -1)
+		if (!fds[i] || pipe(fds[i]) == -1)
 		{
 			clean_double(fds, i + 1);
 			exit(EXIT_FAILURE);
