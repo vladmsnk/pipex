@@ -35,6 +35,6 @@ void	manage_pipes(int curr_pipe, int **fds, int pipes_num);
 void	wait_all_childs(int *pids, int num_of_forks);
 void	close_pipes(int **fds, int pipes_num);
 void	execute_command(char *cmd, char **envp);
-
+void    here_doc_exec(char **argv, char **envp);
 
 #endif  

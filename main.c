@@ -152,8 +152,10 @@ int main(int argc, char **argv, char **envp)
 
 	if (envp && argc >= 5)
 	{
-		if (ft_strncmp(argv[1], "here_doc", ft_strlen(argv[1])) == 0 && argc == 6)
+		if (ft_strncmp(argv[1], "here_doc", ft_strlen(argv[1])) == 0)
+		{
 			pipex_here_doc(argv, envp, argc);
+		}
 		else
 			pipex_bonus(argv, envp, argc);
 	}
