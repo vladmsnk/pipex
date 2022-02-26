@@ -22,7 +22,7 @@ int	**open_pipes(int pipes_num)
 	while (i < pipes_num)
 	{
 		fds[i] = (int *)malloc(sizeof(int) * 2);
-		if (!fds[i] || pipe(fds[i]) == -1)
+		if (pipe(fds[i]) == -1)
 		{
 			clean_double(fds, i + 1);
 			return (NULL);
@@ -59,19 +59,24 @@ void	close_pipes(int **fds, int pipe_cnt)
 {
 	int	i;
 
-	i = 0;
-	while (i < pipe_cnt)
+	if (fds)
 	{
-		close(fds[i][0]);
-		close(fds[i][1]);
-		i++;
+		i = 0;
+		while (i < pipe_cnt)
+		{
+			close(fds[i][0]);
+			close(fds[i][1]);
+			i++;
+		}
 	}
 }
 
 void	clean_variables(t_init *tmp, int num_of_pipes, int exit_stat)
 {
-	free(tmp->fds);
-	free(tmp->pids);
+	close_pipes(tmp->fds, num_of_pipes);
 	clean_double(tmp->fds, num_of_pipes);
+	free(tmp->pids);
+	close(tmp->fd1);
+	close(tmp->fd2);
 	exit(exit_stat);
 }

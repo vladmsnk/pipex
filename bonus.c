@@ -8,7 +8,7 @@ void	pipex_bonus(char **argv, char **envp, int argc)
 
 	tmp = allocate_memory(argc - 3);// argc - 3 it is a number of processes
 	cmp = 0;
-	while (cmp < argc - 3)
+	while (tmp && cmp < argc - 3)
 	{
 		tmp->pids[cmp] = fork();
 		if (tmp->pids[cmp] == 0)
@@ -19,13 +19,14 @@ void	pipex_bonus(char **argv, char **envp, int argc)
 				redirect_outfile(argv[argc - 1], tmp->fds[cmp - 1]);
 			else
 				manage_pipes(cmp, tmp->fds, argc - 4);
-			close_pipes(tmp->fds, argc - 4); 
+			close_pipes(tmp->fds, argc - 4);
 			execute_command(argv[cmp + 2], envp);
 		}
 		else if (tmp->pids[cmp] < 0)
 			exit(EXIT_FAILURE);
 		cmp++;
 	}
+	close_pipes(tmp->fds, argc - 4);
 	wait_all_childs(tmp->pids, argc - 3);
 }
 

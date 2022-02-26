@@ -26,9 +26,6 @@ void	redirect_outfile(char *outfile, int *fds_end)
 
 void	manage_pipes(int curr_pipe, int **fds, int pipes_num)
 {
-	int	i;
-
-	i = 0;
 	dup2(fds[curr_pipe - 1][0], STDIN_FILENO);
 	dup2(fds[curr_pipe][1], STDOUT_FILENO);
 }
@@ -37,7 +34,10 @@ void	wait_all_childs(int *pids, int num_of_forks)
 {
 	int	i;
 
-	i = 0;
-	while (i < num_of_forks)
-		waitpid(pids[i++], NULL, 1);
+	if (pids)
+	{
+		i = 0;
+		while (i < num_of_forks)
+			waitpid(pids[i++], NULL, 0);
+	}
 }

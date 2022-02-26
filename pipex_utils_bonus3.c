@@ -36,6 +36,7 @@ void	execute_command(char *cmd, char **envp)
 		cur_cmd = ft_strjoin(cur_cmd, splited_cmd[0]);
 		if (access(cur_cmd, X_OK) == 0)
 			execve(cur_cmd, splited_cmd, envp);
+		free(cur_cmd);
 	}
 	perror("command not found");
 	exit(EXIT_FAILURE);
